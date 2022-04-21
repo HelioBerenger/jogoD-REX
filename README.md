@@ -1,2 +1,1 @@
-# jogoD-REX
- 
+# Trex-Etapa-0.5
