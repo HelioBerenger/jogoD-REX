@@ -11,10 +11,12 @@ function setup(){
   trex.x = 50
   chao= createSprite(200,180,400,20)
   chao.addImage(groundImage)
+  chaoInvisivel=createSprite(200,190,400,10)
+  chaoInvisivel.visible=false
 }
 var trex, trex_running, edges;
 var groundImage;
-
+var chaoInvisivel
 var chao;
 
 function preload(){
@@ -28,23 +30,21 @@ function preload(){
 function draw(){
   //definir a cor do plano de fundo 
   background("white");
-  
+
   //registrando a posição y do trex
-  console.log(trex.y)
   chao.velocityX=-7
   //pular quando tecla de espaço for pressionada
-  if(keyDown("space")){
+  if(keyDown("space")&&trex.y>=150){
     trex.velocityY = -10;
   }
-  
+
   trex.velocityY = trex.velocityY + 0.5;
-  
+
  //impedir que o trex caia
-  trex.collide(chao)
+  trex.collide(chaoInvisivel)
   drawSprites();
 
-if (chao.x<0){
- chao.x=chao.width/2
- 
-}
+  if (chao.x<0){
+    chao.x=chao.width/2
+  }
 }
