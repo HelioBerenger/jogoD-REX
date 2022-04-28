@@ -18,13 +18,25 @@ var trex, trex_running, edges;
 var groundImage;
 var chaoInvisivel
 var chao;
-
+var cloudImg
 function preload(){
   trex_running = loadAnimation("trex1.png","trex3.png","trex4.png");
   groundImage = loadImage("ground2.png")
+  cloudImg=loadImage("cloud.png")
 }
-
-
+var cloud
+function spawnClouds(){
+  if (frameCount%59==0){
+cloud=createSprite(600,100,40,10)
+  cloud.addImage(cloudImg)
+  cloud.velocityX=-7
+  cloud.scale=random(0.5,0.9)
+  cloud.y=Math.round(random(10,60))
+  cloud.depth=trex.depth
+  trex.depth+=1
+  }
+  
+}
 
 
 function draw(){
@@ -47,4 +59,5 @@ function draw(){
   if (chao.x<0){
     chao.x=chao.width/2
   }
+  spawnClouds();
 }
