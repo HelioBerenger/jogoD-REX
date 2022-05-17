@@ -13,6 +13,8 @@ function setup(){
   chao.addImage(groundImage)
   chaoInvisivel=createSprite(200,190,400,10)
   chaoInvisivel.visible=false
+  cactusGroup=new Group()
+  cloudsGroup=new Group()
 }
 var trex, trex_running, edges;
 var groundImage;
@@ -20,6 +22,11 @@ var chaoInvisivel
 var chao;
 var cloudImg
 var cactu1,cactu2,cactu3,cactu4,cactu5,cactu6
+var cactusGroup,cloudsGroup;
+var PLAY=1;
+var END=0;
+var gameState=PLAY;
+
 function preload(){
   trex_running = loadAnimation("trex1.png","trex3.png","trex4.png");
   groundImage = loadImage("ground2.png")
@@ -42,6 +49,7 @@ cloud=createSprite(600,100,40,10)
   cloud.depth=trex.depth
   trex.depth+=1
   cloud.lifetime=95
+  cloudsGroup.add(cloud);
   }
   
 }
@@ -59,31 +67,43 @@ function spawnCactus(){
         break; case 4: cactus.addImage(cactu4); 
         break; case 5: cactus.addImage(cactu5); 
         break; case 6: cactus.addImage(cactu6); 
-        break; default: break; }
-
+        break; default: break;}
+      cactus.scale=1/2
+      cactus.lifetime=300
+      cactusGroup.add(cactus);
   }
 }
 
 function draw(){
   //definir a cor do plano de fundo 
   background("white");
-
-  //registrando a posição y do trex
-  chao.velocityX=-7
-  //pular quando tecla de espaço for pressionada
-  if(keyDown("space")&&trex.y>=150){
-    trex.velocityY = -10;
+    if(gameState==PLAY){
+    chao.velocityX=-7
+    if(keyDown("space")&&trex.y>=150){
+      trex.velocityY = -10;
+    }
+  
+    trex.velocityY = trex.velocityY + 0.5;
+    if (chao.x<0){
+      chao.x=chao.width/2
+    }
+    spawnClouds();
+    spawnCactus();
+    if(trex.isTouching(cactusGroup)){
+      gameState=END;
+    }
+  }else{
+    chao.velocityX=0
+    cloudsGroup.setVelocityXEach(0);
+    cactusGroup.setVelocityXEach(0);
   }
-
-  trex.velocityY = trex.velocityY + 0.5;
-
+  //registrando a posição y do trex
+  
+  //pular quando tecla de espaço for pressionada
+  
  //impedir que o trex caia
   trex.collide(chaoInvisivel)
   drawSprites();
 
-  if (chao.x<0){
-    chao.x=chao.width/2
-  }
-  spawnClouds();
-  spawnCactus();
+  
 }
