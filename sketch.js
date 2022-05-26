@@ -17,15 +17,15 @@ function setup(){
   cactusGroup=new Group()
   cloudsGroup=new Group()
   //trex.debug=true
-  trex.setCollider("circle", 0, 0, 40);
+  trex.setCollider("rectangle", 0, 0, 400,trex.height);
   gameOver = createSprite(300, 100);
   restart = createSprite(300, 140);
   gameOver.addImage(gameOverImg);
   restart.addImage(restartImg);
-  restart.scale=0.5
-  gameOver.scale=0.5
-  restart.visible=false
-  gameOver.visible=false
+  restart.scale=0.5;
+  gameOver.scale=0.5;
+  restart.visible=false;
+  gameOver.visible=false;
 }
 var trex, trex_running, edges;
 var groundImage;
@@ -37,8 +37,10 @@ var cactusGroup,cloudsGroup;
 var PLAY=1;
 var END=0;
 var gameState=PLAY;
-var trex_collided
-var gameOver, restartImg, gameOverImg
+var trex_collided;
+var gameOver, restartImg, gameOverImg;
+var jumpSound , checkPointSound, dieSound;
+var score=0;
 
 function preload(){
   trex_running = loadAnimation("trex1.png","trex3.png","trex4.png");
@@ -50,9 +52,12 @@ function preload(){
   cactu4=loadImage("obstacle4.png")
   cactu5=loadImage("obstacle5.png")
   cactu6=loadImage("obstacle6.png")
-  trex_collided=loadImage("trex_collided.png")
+  trex_collided=loadImage("trex_collided.png");
   gameOverImg = loadImage("gameOver.png");
   restartImg = loadImage("restart.png");
+  jumpSound = loadSound("jump.mp3")
+  checkPointSound = loadSound("checkpoint.mp3")
+  dieSound = loadSound("die.mp3")
 }
 var cloud
 function spawnClouds(){
@@ -63,8 +68,8 @@ function spawnClouds(){
     cloud.scale=random(0.5,0.9)
     cloud.y=Math.round(random(10,60))
     cloud.depth=trex.depth
-    trex.depth+=1
-    cloud.lifetime=95
+    trex.depth+=1;
+    cloud.lifetime=95;
     cloudsGroup.add(cloud);
   }
   
@@ -83,20 +88,27 @@ function spawnCactus(){
         break; case 4: cactus.addImage(cactu4); 
         break; case 5: cactus.addImage(cactu5); 
         break; case 6: cactus.addImage(cactu6); 
-        break; default: break;}
-      cactus.scale=1/2
-      cactus.lifetime=300
-      cactusGroup.add(cactus);
+        break; default: break;
+      }
+    cactus.scale=1/2;
+    cactus.lifetime=300;
+    cactusGroup.add(cactus);
   }
 }
 
 function draw(){
   //definir a cor do plano de fundo 
   background("white");
+  text("score:"+score,540,20)
     if(gameState==PLAY){
     chao.velocityX=-7
+    score+=Math.round(frameCount/120)
+    if(score%100==0&score>0){
+      checkPointSound.play();
+    }
     if(keyDown("space")&&trex.y>=150){
       trex.velocityY = -10;
+      jumpSound.play();
     }
   
     trex.velocityY = trex.velocityY + 0.5;
@@ -106,7 +118,10 @@ function draw(){
     spawnClouds();
     spawnCactus();
     if(trex.isTouching(cactusGroup)){
-      gameState=END;
+      //gameState=END;
+      //dieSound.play();
+      jumpSound.play();
+      trex.velocityY=-10
     }
   }else{
     chao.velocityX=0
@@ -116,8 +131,9 @@ function draw(){
     cactusGroup.setLifetimeEach(-1)
     cloudsGroup.setLifetimeEach(-1)
     trex.changeAnimation("trex_collided",trex_collided)
-    restart.visible=true
-    gameOver.visible=true
+    restart.visible=true;
+    gameOver.visible=true;
+    
   }
   //registrando a posição y do trex
   
@@ -126,6 +142,5 @@ function draw(){
  //impedir que o trex caia
   trex.collide(chaoInvisivel)
   drawSprites();
-
   
 }
