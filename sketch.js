@@ -17,7 +17,7 @@ function setup(){
   cactusGroup=new Group()
   cloudsGroup=new Group()
   //trex.debug=true
-  trex.setCollider("rectangle", 0, 0, 400,trex.height);
+  trex.setCollider("circle", 0, 0, 40);
   gameOver = createSprite(300, 100);
   restart = createSprite(300, 140);
   gameOver.addImage(gameOverImg);
@@ -102,7 +102,7 @@ function draw(){
   text("score:"+score,540,20)
     if(gameState==PLAY){
     chao.velocityX=-7
-    score+=Math.round(frameCount/120)
+    score+=Math.round(getFrameRate()/60)
     if(score%100==0&score>0){
       checkPointSound.play();
     }
@@ -118,10 +118,10 @@ function draw(){
     spawnClouds();
     spawnCactus();
     if(trex.isTouching(cactusGroup)){
-      //gameState=END;
-      //dieSound.play();
-      jumpSound.play();
-      trex.velocityY=-10
+      gameState=END;
+      dieSound.play();
+      //jumpSound.play();
+      //trex.velocityY=-10
     }
   }else{
     chao.velocityX=0
@@ -141,6 +141,18 @@ function draw(){
   
  //impedir que o trex caia
   trex.collide(chaoInvisivel)
+  if (mousePressedOver(restart)){
+    restartGame();
+  }
   drawSprites();
   
+}
+function restartGame() {
+  gameState=PLAY
+  restart.visible=false;
+  gameOver.visible=false;
+  cloudsGroup.destroyEach()
+  cactusGroup.destroyEach()
+  score=0
+  trex.changeAnimation("running",trex_running)
 }
