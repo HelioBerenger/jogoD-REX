@@ -99,6 +99,7 @@ function spawnCactus(){
 function draw(){
   //definir a cor do plano de fundo 
   background("white");
+  textFont("courier New");
   text("score:"+score,width-80,99-60,40,)
     if(gameState==PLAY){
     chao.velocityX=-7
